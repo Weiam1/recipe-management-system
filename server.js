@@ -44,6 +44,8 @@ app.get('/recipes', async (req, res) => {
 });
 
 
+
+
 // Update an existing recipe
 app.put('/recipes/:id', async (req, res) => {
     try {
@@ -72,6 +74,18 @@ app.delete('/recipes/:id', async (req, res) => {
         res.status(400).json({ error: error.message }); // Handle errors
     }
 });
+
+// Search recipes by title
+app.get('/recipes/search', async (req, res) => {
+    try {
+        const { title } = req.query; // Get the title from the query string
+        const recipes = await Recipe.find({ title: { $regex: title, $options: 'i' } }); // Case-insensitive search
+        res.json(recipes); // Return the search results
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle errors
+    }
+});
+
 
 
 // Start the server
