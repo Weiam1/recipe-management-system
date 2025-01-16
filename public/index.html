@@ -38,6 +38,32 @@
 
 <ul id="searchResults"></ul>
 
+<hr>
+
+<!-- User Management Section -->
+<h2>User Management</h2>
+
+<!-- Form to add a new user -->
+<h3>Add a User</h3>
+<form id="addUserForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="submit">Add User</button>
+</form>
+
+<hr>
+
+<!-- Display all users -->
+<h3>Users</h3>
+<ul id="usersList"></ul>
+
 <script src="script.js"></script>
 </body>
 </html>
