@@ -7,10 +7,13 @@ const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
 
 // Connect to MongoDB
 const mongoURI = "mongodb+srv://weiamalmahnash:3cvXkqHHIHB8zoNa@cluster0.vxitv.mongodb.net/recipes?retryWrites=true&w=majority";
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch((error) => console.error('Error connecting to MongoDB:', error));
 
@@ -39,6 +42,37 @@ app.get('/recipes', async (req, res) => {
         res.status(500).json({ error: error.message }); // Handle errors
     }
 });
+
+
+// Update an existing recipe
+app.put('/recipes/:id', async (req, res) => {
+    try {
+        const { id } = req.params; // Get the recipe ID from the URL
+        const updates = req.body; // Get the updates from the request body
+        const updatedRecipe = await Recipe.findByIdAndUpdate(id, updates, { new: true }); // Update the recipe in the database
+        if (!updatedRecipe) {
+            return res.status(404).json({ error: 'Recipe not found' }); // Return an error if the recipe does not exist
+        }
+        res.json(updatedRecipe); // Return the updated recipe
+    } catch (error) {
+        res.status(400).json({ error: error.message }); // Handle errors
+    }
+});
+
+// Delete an existing recipe
+app.delete('/recipes/:id', async (req, res) => {
+    try {
+        const { id } = req.params; // Get the recipe ID from the URL
+        const deletedRecipe = await Recipe.findByIdAndDelete(id); // Delete the recipe from the database
+        if (!deletedRecipe) {
+            return res.status(404).json({ error: 'Recipe not found' }); // Return an error if the recipe does not exist
+        }
+        res.json({ message: 'Recipe deleted successfully' }); // Return a success message
+    } catch (error) {
+        res.status(400).json({ error: error.message }); // Handle errors
+    }
+});
+
 
 // Start the server
 const PORT = 3000;
