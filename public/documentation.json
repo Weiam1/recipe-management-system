@@ -1,0 +1,196 @@
+{
+  "API Tests": [
+    {
+      "Endpoint": "GET /recipes",
+      "Description": "Retrieve all recipes with optional pagination and sorting.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/recipes?limit=2&offset=0&sortBy=title&order=asc",
+          "Expected Response": {
+            "total": 4,
+            "recipes": [
+              {
+                "_id": "678983f790db0929c935cb70",
+                "title": "Test Recipe",
+                "ingredients": ["Ingredient 1", "Ingredient 2"],
+                "instructions": "These are test instructions.",
+                "createdAt": "2025-01-16T22:11:03.598Z"
+              },
+              {
+                "_id": "678a76e338990292c5219907",
+                "title": "Pasta",
+                "ingredients": ["Tomato", "Basil", "Garlic"],
+                "instructions": "Boil pasta and mix with sauce.",
+                "createdAt": "2025-01-17T15:27:31.132Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "GET /recipes/:id",
+      "Description": "Retrieve a specific recipe by its ID.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/recipes/678983f790db0929c935cb70",
+          "Expected Response": {
+            "_id": "678983f790db0929c935cb70",
+            "title": "Test Recipe",
+            "ingredients": ["Ingredient 1", "Ingredient 2"],
+            "instructions": "These are test instructions.",
+            "createdAt": "2025-01-16T22:11:03.598Z"
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "POST /recipes",
+      "Description": "Create a new recipe.",
+      "Test Cases": [
+        {
+          "Request": {
+            "title": "New Recipe",
+            "ingredients": ["Ingredient A", "Ingredient B"],
+            "instructions": "Mix ingredients."
+          },
+          "Expected Response": {
+            "_id": "678990a3f59cbb0ba5867a4f",
+            "title": "New Recipe",
+            "ingredients": ["Ingredient A", "Ingredient B"],
+            "instructions": "Mix ingredients.",
+            "createdAt": "2025-01-17T10:15:03.849Z"
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "PUT /recipes/:id",
+      "Description": "Update an existing recipe.",
+      "Test Cases": [
+        {
+          "Request": {
+            "title": "Updated Recipe",
+            "ingredients": ["Updated Ingredient"],
+            "instructions": "Updated instructions."
+          },
+          "Expected Response": {
+            "_id": "678990a3f59cbb0ba5867a4e",
+            "title": "Updated Recipe",
+            "ingredients": ["Updated Ingredient"],
+            "instructions": "Updated instructions.",
+            "createdAt": "2025-01-16T23:05:07.849Z"
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "DELETE /recipes/:id",
+      "Description": "Delete a recipe by its ID.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/recipes/678990a3f59cbb0ba5867a4e",
+          "Expected Response": {
+            "message": "Recipe deleted successfully."
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "GET /users",
+      "Description": "Retrieve all users with optional pagination.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/users?limit=2&offset=0",
+          "Expected Response": {
+            "total": 2,
+            "users": [
+              {
+                "_id": "678a8a30985ba3e28f405516",
+                "username": "JohnDoe",
+                "email": "john@example.com",
+                "password": "123456",
+                "createdAt": "2025-01-17T16:49:52.652Z",
+                "__v": 0
+              },
+              {
+                "_id": "678a789e38990292c5219910",
+                "username": "johndoe",
+                "email": "john.doe@example.com",
+                "password": "password123",
+                "createdAt": "2025-01-17T15:34:54.876Z",
+                "__v": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "GET /users/:id",
+      "Description": "Retrieve a specific user by their ID.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/users/678983f790db0929c935cb70",
+          "Expected Response": {
+            "_id": "678a789e38990292c5219910",
+            "username": "johndoe",
+            "email": "john.doe@example.com",
+            "password": "password123",
+            "createdAt": "2025-01-17T15:34:54.876Z",
+            "__v": 0
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "POST /users",
+      "Description": "Create a new user.",
+      "Test Cases": [
+        {
+          "Request": {
+            "username": "JohnDoe",
+            "email": "john@example.com",
+            "password": "password123"
+          },
+          "Expected Response": {
+            "_id": "678990a3f59cbb0ba5867a4f",
+            "username": "JohnDoe",
+            "email": "john@example.com",
+            "createdAt": "2025-01-17T10:15:03.849Z"
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "PUT /users/:id",
+      "Description": "Update an existing user.",
+      "Test Cases": [
+        {
+          "Request": {
+            "username": "UpdatedUser",
+            "email": "updated@example.com"
+          },
+          "Expected Response": {
+            "_id": "678990a3f59cbb0ba5867a4e",
+            "username": "UpdatedUser",
+            "email": "updated@example.com",
+            "createdAt": "2025-01-16T23:05:07.849Z"
+          }
+        }
+      ]
+    },
+    {
+      "Endpoint": "DELETE /users/:id",
+      "Description": "Delete a user by their ID.",
+      "Test Cases": [
+        {
+          "Request": "http://localhost:3000/users/678990a3f59cbb0ba5867a4e",
+          "Expected Response": {
+            "message": "User deleted successfully."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 // Documentation route
 app.get('/documentation', (req, res) => {
-    res.sendFile(__dirname + '/public/documentation.html');
+    res.sendFile(__dirname + '/public/documentation.json');
 });
 
 // Recipe Routes
@@ -104,6 +104,21 @@ app.get('/recipes/search', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Get a single recipe by ID
+app.get('/recipes/:id', async (req, res) => {
+    try {
+        const { id } = req.params; // Extract the ID from the URL
+        const recipe = await Recipe.findById(id); // Find the recipe by ID
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' }); // Handle not found
+        }
+        res.json(recipe); // Return the recipe
+    } catch (error) {
+        res.status(400).json({ error: error.message }); // Handle errors
+    }
+});
+
 
 //Sorting Results
 
