@@ -36,50 +36,82 @@ async function fetchRecipes() {
 // Add a new recipe
 document.getElementById('addRecipeForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const title = document.getElementById('title').value;
-    const ingredients = document.getElementById('ingredients').value.split(',');
-    const instructions = document.getElementById('instructions').value;
+    const title = document.getElementById('title').value.trim();
+    const ingredients = document.getElementById('ingredients').value.split(',').map(i => i.trim());;
+    const instructions = document.getElementById('instructions').value.trim();
 
+ // Frontend validation
+ if (!title) {
+    alert('Title is required.');
+    return;
+}
+if (ingredients.length === 0 || ingredients.some(i => !i)) {
+    alert('At least one valid ingredient is required.');
+    return;
+}
+if (!instructions) {
+    alert('Instructions are required.');
+    return;
+}
+
+try {
     const response = await fetch('/recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, ingredients, instructions })
+        body: JSON.stringify({ title, ingredients, instructions }),
     });
 
     if (response.ok) {
         alert('Recipe added successfully!');
         fetchRecipes(); // Refresh the list
     } else {
-        alert('Failed to add recipe');
+        const error = await response.json();
+        alert(`Failed to add recipe: ${error.error}`);
     }
+} catch (error) {
+    console.error('Error adding recipe:', error);
+    alert('An unexpected error occurred.');
+}
 });
+
 
 // Update a recipe
 async function updateRecipe(id, title, ingredients, instructions) {
-    const response = await fetch(`/recipes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, ingredients, instructions }),
-    });
-    if (response.ok) {
-        alert('Recipe updated successfully!');
-        fetchRecipes();
-    } else {
-        alert('Failed to update recipe');
+    try {
+        const response = await fetch(`/recipes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, ingredients, instructions }),
+        });
+
+        if (response.ok) {
+            alert('Recipe updated successfully!');
+            fetchRecipes();
+        } else {
+            const error = await response.json();
+            alert(`Failed to update recipe: ${error.error}`);
+        }
+    } catch (error) {
+        console.error('Error updating recipe:', error);
+        alert('An unexpected error occurred.');
     }
 }
-
 // Delete a recipe
 async function deleteRecipe(id) {
-    const response = await fetch(`/recipes/${id}`, { method: 'DELETE' });
-    if (response.ok) {
-        alert('Recipe deleted successfully!');
-        fetchRecipes();
-    } else {
-        alert('Failed to delete recipe');
+    try {
+        const response = await fetch(`/recipes/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            alert('Recipe deleted successfully!');
+            fetchRecipes();
+        } else {
+            const error = await response.json();
+            alert(`Failed to delete recipe: ${error.error}`);
+        }
+    } catch (error) {
+        console.error('Error deleting recipe:', error);
+        alert('An unexpected error occurred.');
     }
 }
-
 
 
 // Search recipes by title
@@ -102,27 +134,7 @@ document.getElementById('searchForm').addEventListener('submit', async (event) =
     }
 });
 
-// Add a new user
-document.getElementById('addUserForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
 
-    const response = await fetch('/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
-    });
-
-    if (response.ok) {
-        alert('User added successfully!');
-        fetchUsers(); // Refresh the users list
-    } else {
-        const error = await response.json();
-        alert(`Failed to add user: ${error.error}`);
-    }
-});
 
 // Fetch and display all users
 async function fetchUsers() {
@@ -161,22 +173,41 @@ async function fetchUsers() {
 // Add a new user
 document.getElementById('addUserForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    const response = await fetch('/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
-    });
+    // Frontend validation
+    if (!username || !/^[a-zA-Z\s]+$/.test(username)) {
+        alert('Username must contain only letters and spaces.');
+        return;
+    }
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        alert('Please provide a valid email address.');
+        return;
+    }
+    if (!password || password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+    }
 
-    if (response.ok) {
-        alert('User added successfully!');
-        fetchUsers(); // Refresh the list
-    } else {
-        const error = await response.json();
-        alert(`Failed to add user: ${error.error}`);
+    try {
+        const response = await fetch('/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password }),
+        });
+
+        if (response.ok) {
+            alert('User added successfully!');
+            fetchUsers(); // Refresh the list
+        } else {
+            const error = await response.json();
+            alert(`Failed to add user: ${error.error}`);
+        }
+    } catch (error) {
+        console.error('Error adding user:', error);
+        alert('An unexpected error occurred.');
     }
 });
 
