@@ -90,6 +90,36 @@ app.get('/recipes/search', async (req, res) => {
     }
 });
 
+// Search recipes by title or ingredient
+app.get('/recipes/search', async (req, res) => {
+    try {
+        const { title, ingredient } = req.query;
+        const filter = {};
+        if (title) filter.title = { $regex: title, $options: 'i' };
+        if (ingredient) filter.ingredients = { $regex: ingredient, $options: 'i' };
+
+        const recipes = await Recipe.find(filter);
+        res.json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+//Sorting Results
+
+app.get('/recipes', async (req, res) => {
+    try {
+        const { sortBy = 'createdAt', order = 'asc', limit = 10, offset = 0 } = req.query;
+        const recipes = await Recipe.find()
+            .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
+            .skip(Number(offset))
+            .limit(Number(limit));
+        res.json(recipes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // User Routes
 app.post('/users', async (req, res) => {
