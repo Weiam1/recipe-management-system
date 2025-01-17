@@ -22,7 +22,12 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Recipe Management System API!');
 });
 
-// Add a new recipe
+// Documentation route
+app.get('/documentation', (req, res) => {
+    res.sendFile(__dirname + '/public/documentation.html');
+});
+
+// Recipe Routes
 app.post('/recipes', async (req, res) => {
     try {
         const recipe = new Recipe(req.body); // Create a new recipe using the request body
@@ -36,8 +41,11 @@ app.post('/recipes', async (req, res) => {
 // Get all recipes
 app.get('/recipes', async (req, res) => {
     try {
-        const recipes = await Recipe.find(); // Fetch all recipes from the database
-        res.json(recipes); // Return the recipes as JSON
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = parseInt(req.query.offset) || 0;
+        const recipes = await Recipe.find().skip(offset).limit(limit);
+        const total = await Recipe.countDocuments();
+        res.json({ total, recipes });
     } catch (error) {
         res.status(500).json({ error: error.message }); // Handle errors
     }
@@ -46,18 +54,16 @@ app.get('/recipes', async (req, res) => {
 
 
 
-// Update an existing recipe
+
 app.put('/recipes/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Get the recipe ID from the URL
-        const updates = req.body; // Get the updates from the request body
-        const updatedRecipe = await Recipe.findByIdAndUpdate(id, updates, { new: true }); // Update the recipe in the database
-        if (!updatedRecipe) {
-            return res.status(404).json({ error: 'Recipe not found' }); // Return an error if the recipe does not exist
-        }
-        res.json(updatedRecipe); // Return the updated recipe
+        const { id } = req.params; 
+        const updates = req.body; 
+        const updatedRecipe = await Recipe.findByIdAndUpdate(id, updates, { new: true });
+        if (!updatedRecipe) return res.status(404).json({ error: 'Recipe not found' }); // Return an error if the recipe does not exist
+        res.json(updatedRecipe); 
     } catch (error) {
-        res.status(400).json({ error: error.message }); // Handle errors
+        res.status(400).json({ error: error.message }); 
     }
 });
 
@@ -66,9 +72,7 @@ app.delete('/recipes/:id', async (req, res) => {
     try {
         const { id } = req.params; // Get the recipe ID from the URL
         const deletedRecipe = await Recipe.findByIdAndDelete(id); // Delete the recipe from the database
-        if (!deletedRecipe) {
-            return res.status(404).json({ error: 'Recipe not found' }); // Return an error if the recipe does not exist
-        }
+        if (!deletedRecipe)  return res.status(404).json({ error: 'Recipe not found' }); 
         res.json({ message: 'Recipe deleted successfully' }); // Return a success message
     } catch (error) {
         res.status(400).json({ error: error.message }); // Handle errors
@@ -82,7 +86,7 @@ app.get('/recipes/search', async (req, res) => {
         const recipes = await Recipe.find({ title: { $regex: title, $options: 'i' } }); // Case-insensitive search
         res.json(recipes); // Return the search results
     } catch (error) {
-        res.status(500).json({ error: error.message }); // Handle errors
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -100,8 +104,11 @@ app.post('/users', async (req, res) => {
 
 app.get('/users', async (req, res) => {
     try {
-        const users = await User.find();
-        res.json(users);
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = parseInt(req.query.offset) || 0;
+        const users = await User.find().skip(offset).limit(limit);
+        const total = await User.countDocuments();
+        res.json({ total, users });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -110,10 +117,10 @@ app.get('/users', async (req, res) => {
 app.get('/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+        const updates = req.body;
+        const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        res.json(updatedUser);
         res.json(user);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -138,14 +145,14 @@ app.delete('/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const deletedUser = await User.findByIdAndDelete(id);
-        if (!deletedUser) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+        if (!deletedUser) return res.status(404).json({ error: 'User not found' });
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
+
+
 
 // Start the server
 const PORT = 3000;
